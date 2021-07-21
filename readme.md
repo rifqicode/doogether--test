@@ -80,3 +80,7 @@ Berikut List API yang harus bibuat:
 
 <p> 7. Delete Session </p>
 <p> <b> URL : localhost:3000/session/delete/:id ( POST ) </b> </p>
+<p> Header </p>
+<p> <b> x-access-token : 'Bearer' + token </b> </p>
+
+<br>
