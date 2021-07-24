@@ -78,6 +78,7 @@ router.post('/create', jwtMiddleware, async (req, res) => {
 
 // craete session
 router.post('/update/:id', jwtMiddleware, async (req, res) => {
+    let userID = req.userID;
     let sessionId = req.params.id;
     let { name, description, start, duration } = req.body;
 
@@ -89,7 +90,16 @@ router.post('/update/:id', jwtMiddleware, async (req, res) => {
 
         return false;
     }
-    
+
+    // get data by id 
+    let findData = await db.queryOneRow(`SELECT * FROM session WHERE id = ${sessionId}`);
+    if (findData.userID != userID) {
+        return res.status(401).send({
+            status: 'KO',
+            message: 'Data yang ingin diedit tidak dibuat oleh user yang sama'
+        });
+    }
+
     let now = new Date();
     dateFormat(now, "yyyy-mm-dd");
 
@@ -113,7 +123,16 @@ router.post('/update/:id', jwtMiddleware, async (req, res) => {
 
 // craete session
 router.post('/delete/:id', jwtMiddleware, async (req, res) => {
+    let userID = req.userID;
     let sessionId = req.params.id;
+
+    let findData = await db.queryOneRow(`SELECT * FROM session WHERE id = ${sessionId}`);
+    if (findData.userID != userID) {
+        return res.status(401).send({
+            status: 'KO',
+            message: 'tidak memiliki akses untuk data yg dihapus'
+        });
+    }
 
     // create session
     await db.query(`
